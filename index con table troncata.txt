@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RM APPALTI SPA - Dashboard Computo</title>
+    <style>
+        :root {
+            --primary-bg: #003366;
+            /* Blu istituzionale */
+            --header-text: #ffffff;
+            --accent-color: #ff9800;
+            /* Arancio per focus */
+            --row-even: #f4f6f9;
+            --row-hover: #d1e7fd;
+            --border-color: #cbd5e0;
+
+            /* Colori Totali */
+            --tot-base-bg: #e3f2fd;
+            --tot-base-text: #0d47a1;
+            --tot-rm-bg: #ffebee;
+            --tot-rm-text: #b71c1c;
+            --tot-mano-bg: #e8f5e9;
+            --tot-mano-text: #1b5e20;
+            --tot-bgt-bg: #fff3e0;
+            --tot-bgt-text: #e65100;
+        }
+
+        /* --- COVER PAGE STYLES (Modern Light Theme) --- */
+        #landing-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            /* pure white */
+            color: #333;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
+            transition: opacity 0.5s ease-out;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+
+        .cover-logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            height: 60px;
+            /* Adjust size as needed */
+            z-index: 10001;
+        }
+
+        .cover-container {
+            width: fit-content;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        #landing-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #eaeff2;
+            z-index: 10000;
+            display: flex;
+            /* overridden by JS to flex, but good to have base */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+        }
+
+        #password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            /* Dark brand background */
+            z-index: 20000;
+            /* Above everything */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        #password-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        #password-input {
+            width: 100%;
+            padding: 12px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 18px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #password-input:focus {
+            border-color: #ff9800;
+        }
+
+        #password-btn {
+            background-color: #003366;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        #password-btn:hover {
+            background-color: #004080;
+        }
+
+        .error-msg {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .cover-title {
+            font-size: 44px;
+            font-weight: 900;
+            color: #003366;
+            /* Deep Blue */
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cover-subtitle {
+            font-size: 20px;
+            color: #555;
+            margin-bottom: 30px;
+            font-weight: 300;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+            display: inline-block;
+        }
+
+        .cover-info-bar {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 50px;
+            border: 1px solid #e9ecef;
+            color: #003366;
+        }
+
+        .cover-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            background: white;
+        }
+
+        .cover-table th,
+        .cover-table td {
+            border: 1px solid #dee2e6;
+            padding: 10px 15px;
+            /* Compact padding */
+            text-align: right;
+            color: #333;
+        }
+
+        .cover-table th {
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .cover-table td:first-child {
+            text-align: left;
+            font-weight: 700;
+            background-color: #f8f9fa;
+            color: #003366;
+        }
+
+        /* Large Numbers Request */
+        .cover-table td:not(:first-child) {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 19px;
+            /* Significantly Increased */
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .cover-table tr:hover td {
+            background-color: #e3f2fd;
+        }
+
+        .cover-table tr.total-row td {
+            background-color: #003366;
+            /* Dark background for total */
+            color: white;
+            font-weight: 800;
+            font-size: 21px;
+            /* Even bigger for final totals */
+        }
+
+
+        .btn-enter {
+            background-color: #ff9800;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            padding: 15px 50px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-enter:hover {
+            background-color: #f57c00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+
+        .btn-enter {
+            background: linear-gradient(135deg, #7aa2f7 0%, #bb9af7 100%);
+            color: #1a1b26;
+            font-size: 22px;
+            font-weight: 800;
+            padding: 15px 60px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(122, 162, 247, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-enter:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 0 30px rgba(122, 162, 247, 0.6);
+            background: linear-gradient(135deg, #bb9af7 0%, #7aa2f7 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            margin: 0;
+            background-color: #eaeff2;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 1. TESTATA LOGO E TITOLO */
+        .header-panel {
+            flex: 0 0 auto;
+            background: white;
+            padding: 8px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            z-index: 20;
+        }
+
+        .brand-block {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .title-block h1 {
+            font-size: 16px;
+            margin: 0;
+            color: var(--primary-bg);
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .title-block .subtitle {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .page-btn {
+            padding: 4px 10px;
+            cursor: pointer;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .page-btn:hover {
+            background: #eee;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: default;
+        }
+
+        /* 2. DASHBOARD TOTALI (Sopra la descrizione) */
+        .dashboard-bar {
+            flex: 0 0 auto;
+            background: white;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            /* Se lo schermo è piccolo scorre orizzontalmente */
+            align-items: stretch;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 140px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+        }
+
+        .stat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 3px;
+            opacity: 0.8;
+        }
+
+        .stat-value {
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Consolas', monospace;
+            white-space: nowrap;
+        }
+
+        /* Colori specifici per le card */
+        .card-rows {
+            background: #f5f5f5;
+            color: #555;
+            border-left: 4px solid #555;
+        }
+
+        .card-base {
+            background: var(--tot-base-bg);
+            color: var(--tot-base-text);
+            border-left: 4px solid var(--tot-base-text);
+        }
+
+        .card-cec {
+            background: #f3e5f5;
+            color: #7b1fa2;
+            border-left: 4px solid #7b1fa2;
+        }
+
+        .card-rm {
+            background: var(--tot-rm-bg);
+            color: var(--tot-rm-text);
+            border-left: 4px solid var(--tot-rm-text);
+        }
+
+        .card-mano {
+            background: var(--tot-mano-bg);
+            color: var(--tot-mano-text);
+            border-left: 4px solid var(--tot-mano-text);
+        }
+
+        .card-bgt {
+            background: var(--tot-bgt-bg);
+            color: var(--tot-bgt-text);
+            border-left: 4px solid var(--tot-bgt-text);
+        }
+
+        /* 3. VISUALIZZATORE DESCRIZIONE */
+        #description-viewer {
+            flex: 0 0 auto;
+            background: #fffdeb;
+            /* Giallino post-it */
+            border-bottom: 1px solid #e0e0e0;
+            padding: 10px 20px;
+            height: 100px;
+            /* Altezza fissa */
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.4;
+            color: #333;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.03);
+        }
+
+        #desc-placeholder {
+            color: #999;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        #desc-content {
+            display: none;
+            white-space: pre-wrap;
+        }
+
+        .desc-label {
+            font-size: 9px;
+            font-weight: bold;
+            color: #b7950b;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+
+        /* 4. TABELLA */
+        .table-wrapper {
+            flex: 1 1 auto;
+            overflow: auto;
+            background: white;
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 1400px;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            background-color: var(--primary-bg);
+            color: var(--header-text);
+            padding: 8px 6px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #001a33;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+            font-size: 11px;
+            user-select: none;
+        }
+
+        td {
+            padding: 5px 6px;
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid #eee;
+            vertical-align: middle;
+            color: #444;
+            font-size: 11px;
+            height: 25px;
+            /* Altezza riga compatta */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--row-even);
+        }
+
+        tr:hover {
+            background-color: var(--row-hover);
+        }
+
+        /* Cella Descrizione */
+        .desc-cell {
+            cursor: pointer;
+            color: #0277bd;
+            font-weight: 500;
+            max-width: 300px;
+        }
+
+        .desc-cell:hover {
+            text-decoration: underline;
+            background-color: #e1f5fe;
+        }
+
+        .active-row td {
+            background-color: #fff8e1 !important;
+            border-bottom: 1px solid #ffcc00;
+        }
+
+        .num-cell {
+            text-align: right;
+            font-family: 'Consolas', monospace;
+        }
+
+        /* Filtri */
+        .filter-trigger {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-left: 4px;
+            font-size: 9px;
+            transition: all 0.2s;
+        }
+
+        .filter-trigger:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .filter-trigger.active {
+            background: var(--accent-color);
+            color: white;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dropdown Menu */
+        .filter-dropdown {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #aaa;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            z-index: 9999;
+            width: 280px;
+            max-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-search {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            font-size: 12px;
+        }
+
+        .filter-items-container {
+            overflow-y: auto;
+            flex: 1;
+            background: white;
+            max-height: 300px;
+        }
+
+        .filter-item {
+            padding: 5px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 11px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .filter-item:hover {
+            background: #f5f5f5;
+        }
+
+        .filter-item input {
+            margin-right: 8px;
+        }
+
+        .filter-count {
+            margin-left: auto;
+            font-size: 9px;
+            color: #888;
+            background: #eee;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        .filter-actions {
+            padding: 8px;
+            background: #f9f9f9;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-link {
+            color: #0277bd;
+            cursor: pointer;
+            font-size: 10px;
+            text-decoration: underline;
+            margin-right: 10px;
+        }
+
+        .btn-apply {
+            background: var(--primary-bg);
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        /* Loader */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: var(--primary-bg);
+        }
+    </style>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- PASSWORD OVERLAY -->
+    <div id="password-overlay">
+        <div id="password-box">
+            <h2 style="color: #003366; margin-top: 0;">Area Riservata</h2>
+            <p style="color: #666; margin-bottom: 5px;">Inserisci la password per accedere.</p>
+            <input type="password" id="password-input" placeholder="Password">
+            <button id="password-btn" onclick="checkPassword()">Accedi</button>
+            <div id="password-error" class="error-msg">Password errata!</div>
+        </div>
+    </div>
+
+    <!-- COVER PAGE -->
+    <div id="landing-page" style="display: none;"> <!-- Hidden by default until password ok -->
+        <img src="logo.png" class="cover-logo" alt="RM Appalti Logo">
+        <div class="cover-container">
+            <div class="cover-title">Riepilogo Economico Appalto</div>
+            <div class="cover-subtitle">RM APPALTI SPA</div>
+            <div style="font-size: 1.5rem; color: #555; margin-bottom: 30px; font-weight: 500;">Cantiere di Alghero
+            </div>
+
+            <div class="cover-info-bar">
+                <span>Ribasso: 13,50%</span>
+                <span>Oneri Consortili: 9%</span>
+            </div>
+
+            <table class="cover-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">CATEGORIA</th>
+                        <th colspan="3">Importi a Base Gara</th>
+                        <th colspan="3">Importi a Prezzi di Appalto</th>
+                        <th>Ricavi (Netto O.C.)</th>
+                    </tr>
+                    <tr>
+                        <th>CEC</th>
+                        <th>RM APPALTI SPA</th>
+                        <th>Totale</th>
+                        <th>CEC</th>
+                        <th>RM APPALTI SPA</th>
+                        <th>Totale</th>
+                        <th>RM APPALTI SPA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- DATA FROM CSV -->
+                    <tr>
+                        <td>(OG1)</td>
+                        <td>-</td>
+                        <td>3.267.971,85 €</td>
+                        <td>3.267.971,85 €</td>
+                        <td>0,00 €</td>
+                        <td>2.826.795,65 €</td>
+                        <td>2.826.795,65 €</td>
+                        <td>2.572.384,04 €</td>
+                    </tr>
+                    <tr>
+                        <td>(OG10)</td>
+                        <td>-</td>
+                        <td>361.932,40 €</td>
+                        <td>361.932,40 €</td>
+                        <td>0,00 €</td>
+                        <td>313.071,53 €</td>
+                        <td>313.071,53 €</td>
+                        <td>284.895,09 €</td>
+                    </tr>
+                    <tr>
+                        <td>(OG11)</td>
+                        <td>-</td>
+                        <td>9.202.320,60 €</td>
+                        <td>9.202.320,60 €</td>
+                        <td>0,00 €</td>
+                        <td>7.960.007,32 €</td>
+                        <td>7.960.007,32 €</td>
+                        <td>7.243.606,66 €</td>
+                    </tr>
+                    <tr>
+                        <td>(OG3)</td>
+                        <td>1.623.763,07 €</td>
+                        <td>66.673.251,03 €</td>
+                        <td>68.297.014,10 €</td>
+                        <td>1.404.555,06 €</td>
+                        <td>57.672.362,14 €</td>
+                        <td>59.076.917,20 €</td>
+                        <td>52.481.849,55 €</td>
+                    </tr>
+                    <tr>
+                        <td>(OG6)</td>
+                        <td>-</td>
+                        <td>4.895.743,72 €</td>
+                        <td>4.895.743,72 €</td>
+                        <td>0,00 €</td>
+                        <td>4.234.818,32 €</td>
+                        <td>4.234.818,32 €</td>
+                        <td>3.853.684,67 €</td>
+                    </tr>
+                    <tr>
+                        <td>(OS16)</td>
+                        <td>19.846.515,52 €</td>
+                        <td>4.655.014,15 €</td>
+                        <td>24.501.529,67 €</td>
+                        <td>17.167.235,92 €</td>
+                        <td>4.026.587,24 €</td>
+                        <td>21.193.823,16 €</td>
+                        <td>3.664.194,39 €</td>
+                    </tr>
+                    <tr>
+                        <td>(OS29)</td>
+                        <td>12.310.219,13 €</td>
+                        <td>-</td>
+                        <td>12.310.219,13 €</td>
+                        <td>10.648.339,55 €</td>
+                        <td>0,00 €</td>
+                        <td>10.648.339,55 €</td>
+                        <td>0,00 €</td>
+                    </tr>
+                    <tr>
+                        <td>(OS9)</td>
+                        <td>-</td>
+                        <td>9.147.467,13 €</td>
+                        <td>9.147.467,13 €</td>
+                        <td>0,00 €</td>
+                        <td>7.912.559,07 €</td>
+                        <td>7.912.559,07 €</td>
+                        <td>7.200.428,75 €</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Totale Lavori</td>
+                        <td>33.780.497,72 €</td>
+                        <td>98.203.700,88 €</td>
+                        <td>131.984.198,60 €</td>
+                        <td>29.220.130,53 €</td>
+                        <td>84.946.201,26 €</td>
+                        <td>114.166.331,79 €</td>
+                        <td>77.301.043,15 €</td>
+                    </tr>
+                    <tr>
+                        <td colspan="8" style="background:#fff; height:10px; border:none;"></td>
+                    </tr>
+                    <tr>
+                        <td>Sicurezza</td>
+                        <td>1.068.948,03 €</td>
+                        <td>3.107.551,97 €</td>
+                        <td>4.176.500,00 €</td>
+                        <td>1.068.948,03 €</td>
+                        <td>3.107.551,97 €</td>
+                        <td>4.176.500,00 €</td>
+                        <td>2.827.872,30 €</td>
+                    </tr>
+                    <tr class="total-row" style="background:#003366; color:white;">
+                        <td>TOTALE COMPLESSIVO</td>
+                        <td>34.849.445,75 €</td>
+                        <td>101.311.252,85 €</td>
+                        <td>136.160.698,60 €</td>
+                        <td>30.289.078,56 €</td>
+                        <td>88.053.753,23 €</td>
+                        <td>118.342.831,79 €</td>
+                        <td>80.128.915,44 €</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Chart Container -->
+            <div
+                style="width: 100%; max-width: 800px; margin: 0 auto 30px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <canvas id="soaChart"></canvas>
+            </div>
+
+            <button class="btn-enter" onclick="enterDashboard()">Accedi al Computo</button>
+        </div>
+    </div>
+
+
+
+    <div id="loader">
+        <div style="font-size: 20px; font-weight: 800; margin-bottom: 10px;">CARICAMENTO DASHBOARD...</div>
+        <div style="font-size: 12px; color: #666;">Elaborazione dati e calcolo somme</div>
+    </div>
+
+    <div class="header-panel">
+        <div class="brand-block">
+            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+            <div class="title-block">
+                <h1>RM APPALTI SPA - CANTIERE DI ALGHERO</h1>
+                <div class="subtitle">Database Computo Metrico & Analisi Costi</div>
+                <button id="wbsTreeBtn"
+                    style="margin-top: 5px; background: #8e44ad; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 5px;">
+                    <span>🌳</span> Albero WBS
+                </button>
+            </div>
+        </div>
+
+        <div class="pagination-controls">
+            <span id="pageInfo" style="font-size: 11px; margin-right: 10px;">Pag. 1</span>
+            <button class="page-btn" onclick="changePage(-1)" id="btnPrev">◄</button>
+            <button class="page-btn" onclick="changePage(1)" id="btnNext">►</button>
+            <button onclick="resetFilters()"
+                style="margin-left: 15px; background: #c0392b; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Rimuovi
+                Filtri</button>
+            <button onclick="exportMainTable()"
+                style="margin-left: 5px; background: #217346; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Copia
+                Excel</button>
+        </div>
+    </div>
+
+    <div class="dashboard-bar">
+        <div class="stat-card card-rows">
+            <div class="stat-label">Voci Filtrate</div>
+            <div class="stat-value" id="dash-rows">0</div>
+        </div>
+        <div class="stat-card card-base">
+            <div class="stat-label">Tot. Base Gara</div>
+            <div class="stat-value" id="dash-base">€ 0,00</div>
+        </div>
+        <div class="stat-card card-cec">
+            <div class="stat-label">Tot. CEC</div>
+            <div class="stat-value" id="dash-cec">€ 0,00</div>
+        </div>
+        <div class="stat-card card-rm">
+            <div class="stat-label">Tot. RM (-9%)</div>
+            <div class="stat-value" id="dash-rm">€ 0,00</div>
+        </div>
+        <div class="stat-card card-mano">
+            <div class="stat-label">Tot. Manodopera</div>
+            <div class="stat-value" id="dash-mano">€ 0,00</div>
+        </div>
+        <div class="stat-card card-bgt">
+            <div class="stat-label">Tot. BGT</div>
+            <div class="stat-value" id="dash-bgt">€ 0,00</div>
+        </div>
+    </div>
+
+    <div id="description-viewer">
+        <div class="desc-label">LETTORE DESCRIZIONE ESTESA</div>
+        <div id="desc-placeholder">Seleziona una voce dalla tabella per leggere la descrizione completa qui.</div>
+        <div id="desc-content"></div>
+    </div>
+
+    <div class="table-wrapper" id="tableContainer">
+        <table id="mainTable">
+            <thead>
+                <tr>
+                    <th>Nome File <button class="filter-trigger" onclick="openFilter(0, this)">▼</button></th>
+                    <th>WBS <button class="filter-trigger" onclick="openFilter(1, this)">▼</button></th>
+                    <th>Nr <button class="filter-trigger" onclick="openFilter(2, this)">▼</button></th>
+                    <th>Gruppo <button class="filter-trigger" onclick="openFilter(3, this)">▼</button></th>
+                    <th>Super Cat. <button class="filter-trigger" onclick="openFilter(4, this)">▼</button></th>
+                    <th>Categorie <button class="filter-trigger" onclick="openFilter(5, this)">▼</button></th>
+                    <th>Sub Cat. <button class="filter-trigger" onclick="openFilter(6, this)">▼</button></th>
+                    <th>Tariffa <button class="filter-trigger" onclick="openFilter(7, this)">▼</button></th>
+
+                    <th style="min-width: 300px;">Descrizione Estesa <button class="filter-trigger"
+                            onclick="openFilter(8, this)">▼</button></th>
+
+                    <th>U.M. <button class="filter-trigger" onclick="openFilter(9, this)">▼</button></th>
+                    <th>Qt <button class="filter-trigger" onclick="openFilter(10, this)">▼</button></th>
+                    <th>Prezzo Base <button class="filter-trigger" onclick="openFilter(11, this)">▼</button></th>
+                    <th>Imp. Base Gara <button class="filter-trigger" onclick="openFilter(12, this)">▼</button></th>
+                    <th>Prezzo CEC <button class="filter-trigger" onclick="openFilter(13, this)">▼</button></th>
+                    <th>Imp. CEC <button class="filter-trigger" onclick="openFilter(14, this)">▼</button></th>
+                    <th>Prezzo RM <button class="filter-trigger" onclick="openFilter(15, this)">▼</button></th>
+                    <th>Imp. RM <button class="filter-trigger" onclick="openFilter(16, this)">▼</button></th>
+                    <th>% Man. <button class="filter-trigger" onclick="openFilter(17, this)">▼</button></th>
+                    <th>Fraz. Man. <button class="filter-trigger" onclick="openFilter(18, this)">▼</button></th>
+                    <th>Imp. Manodop. <button class="filter-trigger" onclick="openFilter(19, this)">▼</button></th>
+                    <th>Cat. OG/OS <button class="filter-trigger" onclick="openFilter(20, this)">▼</button></th>
+                    <th>Affidamento <button class="filter-trigger" onclick="openFilter(21, this)">▼</button></th>
+                    <th>Tipologia <button class="filter-trigger" onclick="openFilter(22, this)">▼</button></th>
+                    <th>Sottotipologia <button class="filter-trigger" onclick="openFilter(23, this)">▼</button></th>
+                    <th>Prezzo BGT <button class="filter-trigger" onclick="openFilter(24, this)">▼</button></th>
+                    <th>Importo BGT <button class="filter-trigger" onclick="openFilter(25, this)">▼</button></th>
+                    <th>Link</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // =========================================================================================
+        // ISTRUZIONI: Incolla la variabile tableData qui sotto
+        // =========================================================================================
+
+        let tableData = [["2317_03_PE_CME_Appalto", "13", "10", "LINEA FERROVIARIA", "Bilancio terre", "Movimenti di materia", "Trasporti e conferimenti", "PF.0001.0002.0044", "TRASPORTO a discarica e/o da cava dei materiali con percorrenza entro i limiti di 20 km compreso il ritorno a vuoto", "m³", "14.067,375", "8,75", "123.047,33", "7,57", "106.435,94", "6,89", "96.856,71", "0,0000", "0,0000", "0,00", "(OG3)", "RM APPALTI SPA", "TRASPORTI", "TRASPORTI DI TERRA DA CAVA PER  BONIFICA", "4,27", "60.138,03", "<a href=\"CME_APPALTO.PDF#page=246\" target=\"_blank\">Pag.246</a>"], ["2317_03_PE_CME_Appalto", "13", "85", "LINEA FERROVIARIA", "Bilancio terre", "Movimenti di materia", "Trasporti e conferimenti", "PF.0001.0002.0045", "SOVRAPPREZZO PER TRASPORTO a discarica e/o da cava dei materiali per ogni chilometro o frazione di percorrenza oltre i primi 20 km, compreso il ritorno a vuoto", "m³/Km", "281.347,500", "0,47", "131.107,93", "0,40", "113.408,36", "0,37", "103.201,61", "24,9980", "0,2500", "32.774,36", "(OG3)", "RM APPALTI SPA", "TRASPORTI", "TRASPORTI DI TERRA DA CAVA PER  BONIFICA", "0,22", "61.896,45", "<a href=\"CME_APPALTO.PDF#page=247\" target=\"_blank\">Pag.247</a>"], ["2317_03_PE_CME_Appalto", "13", "86", "LINEA FERROVIARIA", "Bilancio terre", "Movimenti di materia", "Trasporti e conferimenti", "PF.0001.0009.0013", "CONFERIMENTO A DISCARICA AUTORIZZATA DI MATERIALE COD. CER. 17 05 04 - Terra e rocce, diverse da quelle di cui alla voce 17 05 03 <br>Conferimento dei rifiuti presso impianto autorizzato al recupero, con rilascio di Copia del Formulario di identificazione dei rifiuti, debitamente vidimato dall'impianto, attestanti l'avvenuto conferimento presso lo stesso, da presentare in copia conforme alla Direzione dei Lavori in sede di emissione dello Stato d'Avanzamento dei Lavori.", "t", "25.321,275", "13,28", "336.342,50", "11,49", "290.936,26", "10,46", "264.752,00", "0,7430", "0,0074", "2.499,02", "(OG3)", "RM APPALTI SPA", "CONFERIMENTI A DISCARICA", "TRASPORTI DI TERRA DA CAVA PER  BONIFICA", "5,00", "126.606,38", "<a href=\"CME_APPALTO.PDF#page=247\" target=\"_blank\">Pag.247</a>"], ["2317_03_PE_CME_Appalto", "12", "6", "LINEA FERROVIARIA", "Bilancio terre", "Bonifica ordigni bellici", "Bonifica ordigni bellici", "BA.OB.A.0101.A", "Taglio di vegetazione di ogni genere e tipo per consentire l'esecuzione della bonifica da mine e ordigni. <br>Taglio di vegetazione di ogni genere e tipo per consentire l'esecuzione della bonifica da mine e ordigni.", "m²", "603.746,000", "0,30", "181.123,80", "0,26", "156.672,09", "0,24", "142.571,60", "34,9810", "0,3498", "63.358,92", "(OG3)", "RM APPALTI SPA", "BONIFICA ORDIGNI BELLICI", "BONIFICA ORDIGNI BELLICI", "0,05", "30.187,30", "<a href=\"CME_APPALTO.PDF#page=244\" target=\"_blank\">Pag.244</a>"], ["2317_03_PE_CME_Appalto", "12", "7", "LINEA FERROVIARIA", "Bilancio terre", "Bonifica ordigni bellici", "Bonifica ordigni bellici", "BA.OB.B.0101.A", "Ricerca e localizzazione di ordigni ed altri manufatti bellici interrati da eseguire fino a 100 cm di profondità con l'impieg o di apparato rilevatore. <br>Ricerca e localizzazione di ordigni ed altri manufatti bellici interrati da eseguire fino a 100 cm di profondità con l'impieg o di apparato rilevatore, in assenza di acqua.", "m²", "603.746,000", "0,34", "205.273,64", "0,29", "177.561,70", "0,27", "161.581,15", "15,9990", "0,1600", "32.841,73", "(OG3)", "RM APPALTI SPA", "BONIFICA ORDIGNI BELLICI", "BONIFICA ORDIGNI BELLICI", "0,15", "90.561,90", "<a href=\"CME_APPALTO.PDF#page=245\" target=\"_blank\">Pag.245</a>"], ["2317_03_PE_CME_Appalto", "12", "8", "LINEA FERROVIARIA", "Bilancio terre", "Bonifica ordigni bellici", "Bonifica ordigni bellici", "BA.OB.B.0102.C", "Ricerca individuale e localizzazione di ordigni esplosivi interrati oltre i 100 cm di profondità a mezzo perforazioni. <br>Ricerca individuale e localizzazione di ordigni esplosivi interrati oltre i 100 cm di profondità a mezzo perforazioni, senza presenza d'acqua.", "m", "158.384,000", "2,60", "411.798,40", "2,25", "356.205,62", "2,05", "324.147,11", "19,8040", "0,1980", "81.552,56", "(OG3)", "RM APPALTI SPA", "BONIFICA ORDIGNI BELLICI", "BONIFICA ORDIGNI BELLICI", "0,25", "39.596,00", "<a href=\"CME_APPALTO.PDF#page=245\" target=\"_blank\">Pag.245</a>"], ["2317_03_PE_CME_Appalto", "12", "9", "LINEA FERROVIARIA", "Bilancio terre", "Bonifica ordigni bellici", "Bonifica ordigni bellici", "BA.OB.C.0102.A", "Sistemazione sommaria delle terre di risulta provenienti dagli scavi. <br>Sistemazione sommaria delle terre di risulta provenienti dagli scavi e dalle perforazioni mediante regolarizzazione delle superfici.", "m³", "118.439,500", "0,46", "54.482,17", "0,40", "47.127,08", "0,36", "42.885,64", "12,6160", "0,1262", "6.873,47", "(OG3)", "RM APPALTI SPA", "BONIFICA ORDIGNI BELLICI", "BONIFICA ORDIGNI BELLICI", "2,04", "241.616,58", "<a href=\"CME_APPALTO.PDF#page=245\" target=\"_blank\">Pag.245</a>"], ["2317_03_PE_CME_Appalto", "12", "11", "LINEA FERROVIARIA", "Bilancio terre", "Assistenza Archeologica", "Assistenza Archeologica", "AP.ARH.001", "ASSISTENZA ARCHEOLOGICA costo persona giornaliero", "h", "840,000", "28,46", "23.908,92", "24,62", "20.681,22", "22,40", "18.819,91", "20,4270", "0,2043", "4.883,88", "(OG3)", "RM APPALTI SPA", "ASSISTENZA ARCHEOLOGICA", "ASSISTENZA ARCHEOLOGICA", "17,03", "14.303,13", "<a href=\"CME_APPALTO.PDF#page=281\" target=\"_blank\">Pag.281</a>"], ["2317_03_PE_CME_Appalto", "12", "79", "Reti Interferite", "Reti Interferite", "Assistenza Archeologica", "Assistenza Archeologica", "AP.ARH.001", "ASSISTENZA ARCHEOLOGICA costo persona giornaliero", "h", "576,000", "28,46", "16.394,69", "24,62", "14.181,41", "22,40", "12.905,08", "18,0010", "0,1800", "2.951,21", "(OG3)", "RM APPALTI SPA", "ASSISTENZA ARCHEOLOGICA", "ASSISTENZA ARCHEOLOGICA", "17,03", "9.807,86", "<a href=\"CME_APPALTO.PDF#page=281\" target=\"_blank\">Pag.281</a>"], ["2317_03_PE_CME_Appalto", "12", "80", "LINEA FERROVIARIA", "Linea", "Assistenza Archeologica", "Assistenza Archeologica", "AP.ARH.001", "ASSISTENZA ARCHEOLOGICA costo persona giornaliero", "h", "576,000", "28,46", "16.394,69", "24,62", "14.181,41", "22,40", "12.905,08", "89,9920", "0,8999", "14.753,91", "(OG3)", "RM APPALTI SPA", "ASSISTENZA ARCHEOLOGICA", "ASSISTENZA ARCHEOLOGICA", "17,03", "9.807,86", "<a href=\"CME_APPALTO.PDF#page=281\" target=\"_blank\">Pag.281</a>"], ["2317_03_PE_CME_Appalto", "12", "81", "Deposito", "Deposito", "Assistenza Archeologica", "Assistenza Archeologica", "AP.ARH.001", "ASSISTENZA ARCHEOLOGICA costo persona giornaliero", "h", "648,000", "28,46", "18.444,02", "24,62", "15.954,08", "22,40", "14.518,21", "9,9990", "0,1000", "1.844,22", "(OG3)", "RM APPALTI SPA", "ASSISTENZA ARCHEOLOGICA", "ASSISTENZA ARCHEOLOGICA", "17,03", "11.033,84", "<a href=\"CME_APPALTO.PDF#page=281\" target=\"_blank\">Pag.281</a>"], ["2317_03_PE_CME_Appalto", "12", "82", "Stazione Mamuntanas", "Stazione Mamuntanas", "Assistenza Archeologica", "Assistenza Archeologica", "AP.ARH.001", "ASSISTENZA ARCHEOLOGICA costo persona giornaliero", "h", "96,000", "28,46", "2.732,45", "24,62", "2.363,57", "22,40", "2.150,85", "54,0060", "0,5401", "1.475,69", "(OG3)", "RM APPALTI SPA", "ASSISTENZA ARCHEOLOGICA", "ASSISTENZA ARCHEOLOGICA", "17,03", "1.634,64", "<a href=\"CME_APPALTO.PDF#page=281\" target=\"_blank\">Pag.281</a>"], ["2317_03_PE_CME_Appalto", "12", "83", "Stazione Aeroporto", "Stazione Aeroporto", "Assistenza Archeologica", "Assistenza Archeologica", "AP.ARH.001", "ASSISTENZA ARCHEOLOGICA costo persona giornaliero", "h", "144,000", "28,46", "4.098,67", "24,62", "3.545,35", "22,40", "3.226,27", "13,0000", "0,1300", "532,83", "(OG3)", "RM APPALTI SPA", "ASSISTENZA ARCHEOLOGICA", "ASSISTENZA ARCHEOLOGICA", "17,03", "2.451,96", "<a href=\"CME_APPALTO.PDF#page=281\" target=\"_blank\">Pag.281</a>"], ["2317_03_PE_CME_Appalto", "12", "84", "Viabilità Interferita", "Viabilità Interferita", "Assistenza Archeologica", "Assistenza Archeologica", "AP.ARH.001", "ASSISTENZA ARCHEOLOGICA costo persona giornaliero", "h", "576,000", "28,46", "16.394,69", "24,62", "14.181,41", "22,40", "12.905,08", "48,0050", "0,4801", "7.870,27", "(OG3)", "RM APPALTI SPA", "ASSISTENZA ARCHEOLOGICA", "ASSISTENZA ARCHEOLOGICA", "17,03", "9.807,86", "<a href=\"CME_APPALTO.PDF#page=282\" target=\"_blank\">Pag.282</a>"], ["2317_03_PE_CME_Appalto", "1.1.1.1", "224", "OPERE D'ARTE MAGGIORI", "Linea", "Viadotto 1 - Riu Sassu", "Opere provvisionali", "B.002.100.f", "PERFORAZIONE  DI  MICROPALI SUBVERTICALI  CON  O  SENZA INCAMICIATURA IN  QUALSIASI MATERIA Sola perforazione di micropali con andamento verticale o comunque inclinato, con l'eventuale onere del rivestimento del perforo eseguito mediante perforazione a rotazione o rotopercussione, in materie di qualsiasi natura, compresa roccia da mina ecc.; compreso l'allontanamento del materiale di risulta e qualsiasi altro onere per dare il perforo finito per l'introduzione dell'armatura. - DIAMETRO  ESTERNO MM 241/300", "m", "784,000", "24,42", "19.145,28", "21,12", "16.560,67", "19,22", "15.070,21", "14,6420", "0,1464", "2.803,25", "(OG3)", "RM APPALTI SPA", "MICROPALI", "PERFORAZIONE", "38,75", "30.380,00", "<a href=\"CME_APPALTO.PDF#page=8\" target=\"_blank\">Pag.8</a>"], ["2317_03_PE_CME_Appalto", "1.1.1.1", "225", "OPERE D'ARTE MAGGIORI", "Linea", "Viadotto 1 - Riu Sassu", "Opere provvisionali", "B.002.105.e", "GETTO DI MICROPALI SUBVERTICALI - GETTO A GRAVITÀ O BASSA PRESSIONE Pali speciali di fondazione o di piccolo diametro, in verticale o subverticale per ancoraggi od altro, eseguiti in terreni di qualsiasi natura e consistenza, anche in presenza d'acqua, attraverso il getto, nei fori ricavati con perforazione pagata a parte, di miscele di cemento tipo R 325 o di cemento e sabbia con additivi, compreso l'onere del getto in presenza di armatura, questa da pagare a parte, ed ogni altro onere, magistero o fornitura. Getto di malta eseguito mediante iniezioni a gravità o a bassa pressione fino ad un volume di iniezione pari a 5 volte il volume teorico del foro. Esclusa la fornitura degli eventuali additivi, solo se ordinata dalla D.L., come da capitolato. - DIAMETRO  ESTERNO MAGGIORE DI MM 240 FINO A MM 300", "m", "784,000", "35,13", "27.541,92", "30,39", "23.823,76", "27,65", "21.679,62", "17,0010", "0,1700", "4.682,40", "(OG3)", "RM APPALTI SPA", "MICROPALI", "GETTO ", "30,84", "24.176,60", "<a href=\"CME_APPALTO.PDF#page=8\" target=\"_blank\">Pag.8</a>"], ["2317_03_PE_CME_Appalto", "1.1.1.1", "226", "OPERE D'ARTE MAGGIORI", "Linea", "Viadotto 1 - Riu Sassu", "Opere provvisionali", "B.002.110.b", "TUBO PER MICROPALI DI OGNI DIMENSIONE Fornitura e posa in opera, nei fori dei pali speciali o micropali, di armatura portante costituita da tubi di acciaio rispondente ai CAM secondo la normativa vigente, per quanto applicabili, nonché alle relative eventuali indicazioni di progetto, congiunti tra loro a mezzo di appositi manicotti filettati muniti di finestrature costituite da due coppie di fori di opportuno diametro, a due a due diametralmente opposti e situati, per ogni coppia, in piani orizzontali distanziati tra loro di circa mm.60 lungo l'asse del tubo; ogni gruppo di fori sarà distanziato di circa m1,50 lungo l'asse del tubo e sarà ricoperto da idoneo manicotto di gomma di adeguata lunghezza, escluso gli oneri per la formazione del foro e per le iniezioni da pagarsi a parte. Fornitura e posa in opera nei fori, di armatura portante costituita da tubi di acciaio, di primo impiego opportunamente certificato, congiunti tra loro a mezzo di appositi manicotti filettati, muniti di finestrature costituite da due coppie di fori di opportuno diametro, a due a due diametralmente opposti. Esclusi gli oneri per la formazione del foro, delle valvole e delle iniezioni da pagarsi a parte. - IN ACCIAIO S275 - S355 CON MANICOTTI FILETTATI CON O SENZA VALVOLATURA", "kg", "32.104,800", "1,95", "62.604,36", "1,69", "54.152,77", "1,53", "49.279,02", "11,2450", "0,1124", "7.039,86", "(OG3)", "RM APPALTI SPA", "MICROPALI", "ARMATURE PER MICROPALI", "1,06", "34.031,09", "<a href=\"CME_APPALTO.PDF#page=8\" target=\"_blank\">Pag.8</a>"], ["2317_03_PE_CME_Appalto", "1.1.1.2", "227", "OPERE D'ARTE MAGGIORI", "Linea", "Viadotto 1 - Riu Sassu", "Opere provvisionali", "PF.0004.0001.0010", "Calcestruzzo a durabilità garantita per opere strutturali in fodazione o in elevazione, avente CLASSE DI CONSISTENZA S4, con dimensione massima dell’aggregato inerte di 31,5 mm (Dmax 31,5), confezionato con cemento 32,5 e fornito in opera con autobetoniera senza l’impiego di pompe o gru fino ad una profondità massima di m 3,00 se entro terra o fino all’altezza di m 0,50 se fuori terra. Gettato entro apposite casseforme da compensarsi a parte, compresa la vibratura e l’innaffiamento dei getti ed escluse le armature metalliche; classe di resistenza caratteristica C28/35 a norma UNI 11104:2016, UNI EN 206-1, NTC di cui al D.M. 17/01/2018 e Linee Guida Consiglio Sup. LLPP - classe di esposizione XC1 - XC2", "m³", "11,880", "229,69", "2.728,72", "198,68", "2.360,34", "180,80", "2.147,91", "8,9990", "0,0900", "245,56", "(OG3)", "RM APPALTI SPA", "OPERE IN C.A.", "CALCESTRUZZO", "131,42", "1.561,27", "<a href=\"CME_APPALTO.PDF#page=9\" target=\"_blank\">Pag.9</a>"], ["2317_03_PE_CME_Appalto", "1.1.1.2", "228", "OPERE D'ARTE MAGGIORI", "Linea", "Viadotto 1 - Riu Sassu", "Opere provvisionali", "PF.0008.0001.0001", "CASSEFORME in legname grezzo per getti di calcestruzzo semplice o armato per OPERE IN FONDAZIONE (plinti, travi rovesce, muri di cantinato, etc.). Comprese armature di sostegno, chioderie, legacci, disarmanti, sfrido e compreso altres il disarmo, la pulizia e il riaccatastamento del legname, valutate per l’effettiva superficie dei casseri a contatto con il getto", "m²", "39,600", "30,66", "1.214,14", "26,52", "1.050,23", "24,13", "955,71", "2,1500", "0,0215", "26,10", "(OG3)", "RM APPALTI SPA", "OPERE IN C.A.", "CASSEFORME", "10,00", "396,00", "<a href=\"CME_APPALTO.PDF#page=9\" target=\"_blank\">Pag.9</a>"], ,"]];
+
+        // *** INCOLLA QUI I TUOI DATI ***
+
+        // =========================================================================================
+
+        // STATO APPLICAZIONE
+        let activeFilters = {};
+        let currentFilteredData = [];
+        let currentPage = 1;
+        let rowsPerPage = 100; // Paginazione per velocità
+        let currentDropdown = null;
+
+        function init() {
+            if (tableData.length === 0) {
+                document.getElementById('loader').innerHTML = "<h3 style='color:red'>ERRORE: Incolla i dati tableData nel codice HTML!</h3>";
+                return;
+            }
+
+            currentFilteredData = tableData;
+            updateDashboard(currentFilteredData); // Calcola totali iniziali
+            renderPage();
+
+            document.getElementById('loader').style.display = 'none';
+
+            document.addEventListener('click', function (e) {
+                if (currentDropdown && !currentDropdown.contains(e.target) && !e.target.classList.contains('filter-trigger')) {
+                    closeDropdown();
+                }
+            });
+            document.getElementById('tableContainer').addEventListener('scroll', function () { if (currentDropdown) closeDropdown(); });
+        }
+
+        // --- UTILS ---
+        function parseIt(str) {
+            if (!str) return 0;
+            // Gestione robusta: toglie spazi, converte . in nulla e , in punto
+            return parseFloat(str.toString().replace(/\s/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+        }
+        function fmtMoney(n) {
+            return '€ ' + n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // --- CALCOLO TOTALI (CRUSCOTTO) ---
+        function updateDashboard(data) {
+            // Usa un semplice ciclo for per massima velocità su grandi numeri
+            let sBase = 0, sCec = 0, sRm = 0, sMano = 0, sBgt = 0;
+
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                sBase += parseIt(row[12]); // Col 12: Imp Base Gara
+                sCec += parseIt(row[14]); // Col 14: Imp CEC
+                sRm += parseIt(row[16]); // Col 16: Imp RM
+                sMano += parseIt(row[19]); // Col 19: Imp Manodopera
+                sBgt += parseIt(row[25]); // Col 25: Imp BGT
+            }
+
+            // Aggiorna DOM
+            document.getElementById('dash-rows').innerText = data.length.toLocaleString('it-IT');
+            document.getElementById('dash-base').innerText = fmtMoney(sBase);
+            document.getElementById('dash-cec').innerText = fmtMoney(sCec);
+            document.getElementById('dash-rm').innerText = fmtMoney(sRm);
+            document.getElementById('dash-mano').innerText = fmtMoney(sMano);
+            document.getElementById('dash-bgt').innerText = fmtMoney(sBgt);
+        }
+
+        // --- RENDER PAGINA ---
+        function renderPage() {
+            const tbody = document.getElementById('tableBody');
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const pageData = currentFilteredData.slice(start, end);
+
+            let html = '';
+            if (pageData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="27" style="text-align:center; padding:20px;">Nessun dato trovato.</td></tr>';
+                updatePaginationUI();
+                return;
+            }
+
+            for (let i = 0; i < pageData.length; i++) {
+                const row = pageData[i];
+                html += '<tr onclick="selectRow(this)">'; // Aggiunto gestore riga
+                for (let j = 0; j < row.length; j++) {
+                    let cls = '';
+                    let content = row[j] || '';
+                    let onclickAttr = '';
+
+                    if ((j >= 10 && j <= 19) || (j >= 24)) cls = 'num-cell';
+
+                    // Colonna Descrizione (8)
+                    if (j === 8) {
+                        cls = 'desc-cell';
+                        const safeContent = content.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                        onclickAttr = `onclick="showDescription('${safeContent}', event)"`;
+                        if (content.length > 70) content = content.substring(0, 70) + '...';
+                    }
+
+                    html += `<td class="${cls}" ${onclickAttr}>${content}</td>`;
+                }
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+            updatePaginationUI();
+        }
+
+        function updatePaginationUI() {
+            const totalPages = Math.ceil(currentFilteredData.length / rowsPerPage) || 1;
+            document.getElementById('pageInfo').innerText = `Pag. ${currentPage} / ${totalPages}`;
+            document.getElementById('btnPrev').disabled = (currentPage === 1);
+            document.getElementById('btnNext').disabled = (currentPage === totalPages);
+        }
+
+        function changePage(delta) {
+            const totalPages = Math.ceil(currentFilteredData.length / rowsPerPage) || 1;
+            const newPage = currentPage + delta;
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderPage();
+                document.getElementById('tableContainer').scrollTop = 0;
+            }
+        }
+
+        // Evidenzia riga selezionata
+        window.selectRow = function (tr) {
+            document.querySelectorAll('.active-row').forEach(r => r.classList.remove('active-row'));
+            tr.classList.add('active-row');
+        }
+
+        // Visualizza Descrizione
+        window.showDescription = function (text, e) {
+            e.stopPropagation(); // Evita doppio trigger
+            const viewer = document.getElementById('desc-content');
+            const placeholder = document.getElementById('desc-placeholder');
+
+            placeholder.style.display = 'none';
+            viewer.style.display = 'block';
+            // Decodifica entità HTML
+            viewer.innerHTML = text.replace(/&quot;/g, '"');
+        }
+
+        // --- FILTRI ---
+        function applyAllFilters() {
+            // 1. Filtra TUTTI i dati
+            currentFilteredData = tableData.filter(row => {
+                for (const colIdx in activeFilters) {
+                    const filterVal = activeFilters[colIdx];
+                    if (filterVal && filterVal.length > 0) {
+                        if (!filterVal.includes(row[colIdx])) return false;
+                    }
+                }
+                return true;
+            });
+
+            // 2. Ricalcola Dashboard sui dati filtrati
+            updateDashboard(currentFilteredData);
+
+            // 3. Reset Pagina e render
+            currentPage = 1;
+            renderPage();
+        }
+
+        // --- UI FILTRI ---
+        window.openFilter = function (colIdx, btn) {
+            if (currentDropdown) closeDropdown();
+
+            // Trova valori unici (basato su altri filtri attivi)
+            const validValues = new Set();
+
+            // Simula filtri escludendo colonna corrente
+            const tempFiltered = tableData.filter(row => {
+                for (const otherCol in activeFilters) {
+                    if (otherCol != colIdx && activeFilters[otherCol]) {
+                        if (!activeFilters[otherCol].includes(row[otherCol])) return false;
+                    }
+                }
+                return true;
+            });
+
+            tempFiltered.forEach(row => validValues.add(row[colIdx]));
+            const sortedValid = Array.from(validValues).sort();
+
+            const dd = document.createElement('div');
+            dd.className = 'filter-dropdown';
+            const searchPlaceholder = (colIdx === 8) ? "Cerca nella descrizione..." : "Cerca...";
+
+            let html = `
+            <input type="text" class="filter-search" placeholder="${searchPlaceholder}" onkeyup="filterItems(this)" autofocus>
+            <div class="filter-items-container">`;
+
+            sortedValid.forEach(val => {
+                const isChecked = !activeFilters[colIdx] || activeFilters[colIdx].includes(val);
+                const safeVal = val ? val.replace(/"/g, '&quot;') : '';
+                html += `
+                <div class="filter-item" onclick="toggleCheck(this)">
+                    <input type="checkbox" value="${safeVal}" ${isChecked ? 'checked' : ''}>
+                    <span>${val === '' ? '(Vuoto)' : val}</span>
+                </div>`;
+            });
+
+            html += `</div>
+            <div class="filter-actions">
+                <div>
+                   <span class="btn-link" onclick="toggleAll(true)">Tutti</span>
+                   <span class="btn-link" onclick="toggleAll(false)">Nessuno</span>
+                </div>
+                <button class="btn-apply" onclick="applyFilter(${colIdx})">OK</button>
+            </div>`;
+
+            dd.innerHTML = html;
+            document.body.appendChild(dd);
+            currentDropdown = dd;
+
+            const rect = btn.getBoundingClientRect();
+            dd.style.top = (rect.bottom + window.scrollY + 2) + 'px';
+            if (rect.left + 280 > window.innerWidth) dd.style.left = (rect.right - 280 + window.scrollX) + 'px';
+            else dd.style.left = (rect.left + window.scrollX) + 'px';
+            dd.triggerBtn = btn;
+
+            setTimeout(() => dd.querySelector('input').focus(), 50);
+        }
+
+        window.closeDropdown = function () {
+            if (currentDropdown) { currentDropdown.remove(); currentDropdown = null; }
+        }
+        window.toggleCheck = function (div) {
+            const cb = div.querySelector('input'); cb.checked = !cb.checked;
+        }
+        window.filterItems = function (input) {
+            const txt = input.value.toLowerCase();
+            const items = currentDropdown.querySelectorAll('.filter-item');
+            items.forEach(it => {
+                const spanTxt = it.querySelector('span').innerText.toLowerCase();
+                it.style.display = spanTxt.includes(txt) ? 'flex' : 'none';
+            });
+        }
+        window.toggleAll = function (state) {
+            currentDropdown.querySelectorAll('.filter-item:not([style*="none"]) input').forEach(i => i.checked = state);
+        }
+        window.applyFilter = function (colIdx) {
+            const inputs = currentDropdown.querySelectorAll('.filter-items-container input');
+            const checkedVals = [];
+            let allChecked = true;
+            inputs.forEach(inp => { if (inp.checked) checkedVals.push(inp.value); else allChecked = false; });
+
+            if (allChecked) { delete activeFilters[colIdx]; if (currentDropdown.triggerBtn) currentDropdown.triggerBtn.classList.remove('active'); }
+            else { activeFilters[colIdx] = checkedVals; if (currentDropdown.triggerBtn) currentDropdown.triggerBtn.classList.add('active'); }
+
+            applyAllFilters();
+            closeDropdown();
+        }
+        window.resetFilters = function () {
+            activeFilters = {};
+            document.querySelectorAll('.filter-trigger').forEach(b => b.classList.remove('active'));
+            applyAllFilters();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+
+
+        // Aggiungi event listener al pulsante WBS
+        document.addEventListener('DOMContentLoaded', function () {
+            const wbsBtn = document.getElementById('wbsTreeBtn');
+            if (wbsBtn) {
+                wbsBtn.addEventListener('click', function () {
+                    createWBSTree();
+                });
+            }
+        });
+
+        // Funzione principale per creare albero WBS - SMART NAMING
+        function createWBSTree() {
+            if (typeof tableData === 'undefined') {
+                alert('Dati non ancora caricati. Riprova.');
+                return;
+            }
+
+            const wbsData = {};
+            window.wbsData = wbsData; // Expose globally for popup access
+            const allWBS = new Set();
+
+            // --- 1. COSTRUZIONE STRUTTURA E RAW DATA ---
+            for (let i = 0; i < tableData.length; i++) {
+                const row = tableData[i];
+                const wbs = String(row[1] || 'NO_WBS');
+                const importoRM = parseFloat(String(row[16] || '0').replace(/\./g, '').replace(',', '.')) || 0;
+                const importoBGT = parseFloat(String(row[25] || '0').replace(/\./g, '').replace(',', '.')) || 0;
+
+                allWBS.add(wbs);
+
+                // Crea nodo se non esiste
+                if (!wbsData[wbs]) {
+                    wbsData[wbs] = {
+                        code: wbs,
+                        nome: '', // Sarà calcolato dopo
+                        voci: 0,
+                        importoRM: 0,
+                        importoBGT: 0,
+                        children: [],
+                        rows: [] // Salviamo le righe grezze per analisi
+                    };
+                }
+
+                // Accumula dati
+                wbsData[wbs].voci++;
+                wbsData[wbs].importoRM += importoRM;
+                wbsData[wbs].importoBGT += importoBGT;
+                wbsData[wbs].rows.push(row);
+            }
+
+            // Genera padri mancanti
+            allWBS.forEach(function (wbs) {
+                if (wbs.indexOf('.') > -1) {
+                    const parts = wbs.split('.');
+                    let parent = '';
+                    for (let i = 0; i < parts.length - 1; i++) {
+                        parent = parent ? parent + '.' + parts[i] : parts[i];
+                        if (!wbsData[parent]) {
+                            wbsData[parent] = {
+                                code: parent,
+                                nome: '',
+                                voci: 0,
+                                importoRM: 0,
+                                importoBGT: 0,
+                                children: [],
+                                rows: []
+                            };
+                        }
+                    }
+                }
+            });
+
+            // Relazioni padre-figlio
+            Object.keys(wbsData).forEach(function (code) {
+                if (code.indexOf('.') > -1) {
+                    const lastDot = code.lastIndexOf('.');
+                    const parentCode = code.substring(0, lastDot);
+                    if (wbsData[parentCode] && !wbsData[parentCode].children.includes(code)) {
+                        wbsData[parentCode].children.push(code);
+                    }
+                }
+            });
+
+            // --- 2. POPOLAMENTO RIGHE RICORSIVO (per i padri) ---
+            // I padri devono conoscere le righe dei figli per capire "cosa contengono"
+            function aggregateRows(nodeCode) {
+                const node = wbsData[nodeCode];
+                // Se ha figli, aggrega le loro righe
+                if (node.children.length > 0) {
+                    let sumRM = 0;
+                    let sumBGT = 0;
+                    node.children.forEach(childCode => {
+                        const childNode = aggregateRows(childCode);
+                        // Propaga le righe su
+                        node.rows = node.rows.concat(childNode.rows);
+
+                        // Somma importi dai figli
+                        sumRM += childNode.importoRM;
+                        sumBGT += childNode.importoBGT;
+                    });
+
+                    // Aggiungi i totali dei figli ai totali del nodo corrente (che ha già i suoi importi diretti)
+                    node.importoRM += sumRM;
+                    node.importoBGT += sumBGT;
+                }
+                return node;
+            }
+
+            // Lancia aggregazione dalle radici
+            const rootNodes = Object.keys(wbsData).filter(c => c.indexOf('.') === -1);
+            rootNodes.forEach(root => aggregateRows(root));
+
+
+            // --- 3. INTELLIGENT NAMING ---
+            // Definizione Colonne Gerarchia
+            // 3: Gruppo, 4: Super Cat, 5: Categorie, 6: Sub Cat
+            // 22: Tipologia, 23: Sottotipologia
+            const hierarchyCols = [3, 4, 5, 6];
+            const extraCols = [22, 23];
+
+            function getCommonValue(rows, colIdx) {
+                if (!rows || rows.length === 0) return '';
+                const firstVal = rows[0][colIdx] || '';
+                for (let i = 1; i < rows.length; i++) {
+                    if ((rows[i][colIdx] || '') !== firstVal) return null; // Mixed
+                }
+                return firstVal;
+            }
+
+            function getMostFrequentValue(rows, colIdx) {
+                if (!rows || rows.length === 0) return '';
+                const counts = {};
+                let maxCount = 0;
+                let bestVal = '';
+
+                for (let i = 0; i < rows.length; i++) {
+                    const val = (rows[i][colIdx] || '').trim();
+                    if (!val) continue;
+
+                    counts[val] = (counts[val] || 0) + 1;
+                    if (counts[val] > maxCount) {
+                        maxCount = counts[val];
+                        bestVal = val;
+                    }
+                }
+                return bestVal;
+            }
+
+            function getBestNameForNode(node, levelIndex) {
+                // 0. OVERRIDES MANUALI (Richiesti utente)
+                const manualNames = {
+                    '12': 'Bonifica ordigni bellici',
+                    '13': 'Bilancio terre'
+                };
+                if (manualNames[node.code]) return manualNames[node.code];
+
+                // 1. Logica Standard (Livello gerarchico)
+                let colIdx = hierarchyCols[Math.min(levelIndex, hierarchyCols.length - 1)];
+                let name = getCommonValue(node.rows, colIdx);
+
+                // 2. Se non c'è unanimità (Misto), usa il valore più frequente (es. per il nodo 7)
+                // Invece di scendere "Deepest", restiamo sul livello ma prendiamo la maggioranza
+                if (!name) name = getMostFrequentValue(node.rows, colIdx);
+
+                // 3. Se ancora vuoto (es. livello senza dati), prova a scendere nelle colonne successive
+                if (!name) {
+                    for (let k = levelIndex + 1; k < hierarchyCols.length; k++) {
+                        const fallbackCol = hierarchyCols[k];
+                        const fallback = getCommonValue(node.rows, fallbackCol) || getMostFrequentValue(node.rows, fallbackCol);
+                        if (fallback) {
+                            name = fallback;
+                            break;
+                        }
+                    }
+                }
+
+                // 4. Ultimo tentativo con Tipologia(22)
+                if (!name) name = getCommonValue(node.rows, 22) || getMostFrequentValue(node.rows, 22);
+
+                // 5. Default
+                return name || ('Nodo ' + node.code);
+            }
+
+            // Assegna nomi base
+            Object.values(wbsData).forEach(node => {
+                const level = node.code.split('.').length - 1; // 0-based level
+                node.nome = getBestNameForNode(node, level);
+
+            });
+
+            // --- 4. RISOLUZIONE CONFLITTI (Disambiguazione) ---
+            // Se due fratelli hanno lo stesso nome, bisogna aggiungere dettagli
+            function resolveConflicts(nodesList) {
+                // Raggruppa per nome
+                const nameMap = {};
+                nodesList.forEach(n => {
+                    if (!nameMap[n.nome]) nameMap[n.nome] = [];
+                    nameMap[n.nome].push(n);
+                });
+
+                // Itera sui gruppi con collisioni
+                Object.keys(nameMap).forEach(name => {
+                    const group = nameMap[name];
+                    if (group.length > 1) {
+                        // C'è conflitto. Cerchiamo un discriminante.
+                        // Proviamo colonne extra in ordine: Categorie(5), SubCat(6), Tipologia(22), Sottotipologia(23)
+                        // Escludendo quella usata per il nome base (assumiamo euristica)
+                        const candidates = [5, 6, 22, 23];
+
+                        for (let col of candidates) {
+                            // Verifica se questa colonna offre valori diversi per i nodi del gruppo
+                            const values = new Set();
+                            group.forEach(n => {
+                                const val = getCommonValue(n.rows, col) || 'Misto';
+                                values.add(val);
+                            });
+
+                            if (values.size > 1) {
+                                // Trovato discriminante! Aggiorna nomi
+                                group.forEach(n => {
+                                    const val = getCommonValue(n.rows, col); // Può essere null se 'Misto' all'interno del nodo stesso
+                                    if (val && val !== n.nome) {
+                                        n.nome += ' - ' + val;
+                                    } else {
+                                        // Se anche interno è misto, o uguale al nome, non aiuta molto, ma proviamo
+                                        // Fallback estremo: aggiungi codice
+                                        n.nome += ' (' + n.code + ')';
+                                    }
+                                });
+                                return; // Risolto per questo gruppo (si spera)
+                            }
+                        }
+
+                        // Se nessun discriminante trovato, aggiungi codice
+                        group.forEach(n => {
+                            n.nome += ' (' + n.code + ')';
+                        });
+                    }
+                });
+            }
+
+            // Applica risoluzione conflitti a ogni livello di "siblings"
+            // 1. Radici
+            resolveConflicts(rootNodes.map(k => wbsData[k]));
+            // 2. Figli di ogni nodo
+            Object.values(wbsData).forEach(node => {
+                if (node.children.length > 0) {
+                    resolveConflicts(node.children.map(k => wbsData[k]));
+                }
+            });
+
+
+            // --- 5. RENDER (Invariato ma pulito) ---
+            const newWin = window.open('', 'WBSTree', 'width=1200,height=800');
+            if (!newWin) { alert('Popup bloccato. Abilita i popup.'); return; }
+
+            newWin.document.open();
+            newWin.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Albero WBS Intelligente</title>');
+            newWin.document.write('<style>');
+            newWin.document.write('body {font-family: "Segoe UI", Arial; margin: 20px; background: #f0f2f5;}');
+            newWin.document.write('.header {background: #003366; color: white; padding: 15px; border-radius: 8px 8px 0 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}');
+            newWin.document.write('.controls {background: white; padding: 10px; border-bottom: 1px solid #ddd; display: flex; gap: 10px;}');
+            newWin.document.write('.btn {padding: 6px 14px; background: #eee; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;}');
+            newWin.document.write('.btn:hover {background: #ddd;}');
+            newWin.document.write('.tree {background: white; padding: 20px; border-radius: 0 0 8px 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}');
+
+            newWin.document.write('.wbs-row { display: flex; align-items: center; padding: 4px 0; border-bottom: 1px solid #f9f9f9; }');
+            newWin.document.write('.wbs-row:hover { background-color: #f0f7ff; }');
+
+            newWin.document.write('.wbs-content { flex: 1; display: flex; align-items: center; }');
+            newWin.document.write('.wbs-code { font-family: Consolas, monospace; color: #666; font-size: 12px; width: 80px; flex-shrink: 0; }');
+            newWin.document.write('.wbs-name { font-weight: 600; color: #333; margin-right: 10px; }');
+            newWin.document.write('.wbs-meta { font-size: 11px; color: #888; margin-left: auto; display: flex; gap: 15px; }');
+            newWin.document.write('.wbs-currency { font-family: Consolas, monospace; min-width: 80px; text-align: right; }');
+
+            newWin.document.write('.toggler { width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #003366; font-weight: bold; margin-right: 5px; user-select: none; }');
+            newWin.document.write('.toggler:hover { background: #eee; border-radius: 3px; }');
+            newWin.document.write('.children-container { margin-left: 25px; border-left: 1px solid #eee; }');
+            newWin.document.write('.hidden { display: none; }');
+
+            // --- MODAL CSS ---
+            newWin.document.write('.modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }');
+            newWin.document.write('.modal-content { background-color: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 1200px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); position: relative; }');
+            newWin.document.write('.close { position: absolute; top: 10px; right: 20px; color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }');
+            newWin.document.write('.close:hover, .close:focus { color: black; text-decoration: none; cursor: pointer; }');
+            newWin.document.write('.modal-header { border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; }');
+            newWin.document.write('.modal-title { margin: 0; color: #003366; font-size: 18px; }');
+            newWin.document.write('table.details-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }');
+            newWin.document.write('table.details-table th, table.details-table td { border: 1px solid #ddd; padding: 6px; text-align: left; }');
+            newWin.document.write('table.details-table th { background-color: #003366; color: white; position: sticky; top: 0; }');
+            newWin.document.write('table.details-table tr:nth-child(even) { background-color: #f2f2f2; }');
+            newWin.document.write('table.details-table td.num { text-align: right; font-family: Consolas, monospace; }');
+
+            newWin.document.write('</style></head><body>');
+
+            newWin.document.write('<div class="header"><h2>WBS Project Tree</h2><div style="font-size:12px; opacity:0.8">Generazione intelligente dei nomi</div></div>');
+            newWin.document.write('<div class="controls"><button class="btn" onclick="expandAll()">Espandi Tutto</button><button class="btn" onclick="collapseAll()">Comprimi Tutto</button></div>');
+
+            // Modal Placeholder
+            newWin.document.write('<div id="myModal" class="modal">');
+            newWin.document.write('  <div class="modal-content">');
+            newWin.document.write('    <span class="close" onclick="closeModal()">&times;</span>');
+            newWin.document.write('    <div class="modal-header"><h3 id="modalTitle" class="modal-title">Dettagli</h3></div>');
+            newWin.document.write('    <div id="modalBody"></div>');
+            newWin.document.write('  </div>');
+            newWin.document.write('</div>');
+
+            newWin.document.write('<div class="tree">');
+
+            function writeNode(code) {
+                const node = wbsData[code];
+                if (!node) return;
+                const hasChildren = node.children.length > 0;
+
+                newWin.document.write('<div class="node-wrapper">');
+                newWin.document.write('<div class="wbs-row">');
+
+                // Toggler
+                if (hasChildren) {
+                    newWin.document.write('<span class="toggler" onclick="toggle(this)">▼</span>');
+                } else {
+                    newWin.document.write('<span class="toggler" style="opacity:0.3">•</span>');
+                }
+
+                newWin.document.write('<div class="wbs-content">');
+                newWin.document.write('<span class="wbs-code">' + node.code + '</span>');
+                newWin.document.write('<span class="wbs-name" onclick="window.opener.showNodeDetails(\'' + node.code + '\', this)" style="cursor:pointer; text-decoration:underline; color:#0056b3;" title="Clicca per vedere le voci">' + node.nome + '</span>');
+
+                newWin.document.write('<div class="wbs-meta">');
+                newWin.document.write('<span>' + node.voci + ' voci</span>');
+                newWin.document.write('<span class="wbs-currency" style="color:#003366">RM ' + node.importoRM.toLocaleString('it-IT', { minimumFractionDigits: 0 }) + '</span>');
+                newWin.document.write('<span class="wbs-currency" style="color:#e67e22">BGT ' + node.importoBGT.toLocaleString('it-IT', { minimumFractionDigits: 0 }) + '</span>');
+                newWin.document.write('</div>'); // end meta
+
+                newWin.document.write('</div>'); // end content
+                newWin.document.write('</div>'); // end row
+
+                if (hasChildren) {
+                    newWin.document.write('<div class="children-container">');
+                    node.children.sort((a, b) => {
+                        // Sort numerico semantico (1.2 vs 1.10)
+                        return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+                    }).forEach(child => writeNode(child));
+                    newWin.document.write('</div>');
+                }
+                newWin.document.write('</div>'); // end wrapper
+            }
+
+            // Scrivi radici
+            rootNodes.sort((a, b) => a.localeCompare(b, undefined, { numeric: true })).forEach(root => writeNode(root));
+
+            newWin.document.write('</div>');
+            newWin.document.write('<script>');
+            newWin.document.write('function toggle(btn) { const container = btn.parentElement.nextElementSibling; if(container) { container.classList.toggle("hidden"); btn.innerText = container.classList.contains("hidden") ? "►" : "▼"; } }');
+            newWin.document.write('function expandAll() { document.querySelectorAll(".children-container").forEach(e => e.classList.remove("hidden")); document.querySelectorAll(".toggler").forEach(e => { if(e.innerText !== "•") e.innerText = "▼"; }); }');
+            newWin.document.write('function collapseAll() { document.querySelectorAll(".children-container").forEach(e => e.classList.add("hidden")); document.querySelectorAll(".toggler").forEach(e => { if(e.innerText !== "•") e.innerText = "►"; }); }');
+
+            // Modal scripts
+            newWin.document.write('function closeModal() { document.getElementById("myModal").style.display = "none"; }');
+            newWin.document.write('window.onclick = function(event) { const modal = document.getElementById("myModal"); if (event.target == modal) { modal.style.display = "none"; } }');
+
+            newWin.document.write('</'); newWin.document.write('script>');
+            newWin.document.write('</body></html>');
+            newWin.document.close();
+        }
+
+
+        // Funzione per mostrare i dettagli (esposta globalmente per essere chiamata dal popup)
+        window.showNodeDetails = function (code) {
+            // Trova la finestra popup
+            // Nota: window.open('', 'WBSTree') recupera la finestra esistente se ha lo stesso nome
+            const popup = window.open('', 'WBSTree');
+            if (!popup || !popup.document) return;
+
+            const data = window.wbsData[code];
+            if (!data) { alert('Dati non trovati per ' + code); return; }
+
+            const modal = popup.document.getElementById('myModal');
+            const title = popup.document.getElementById('modalTitle');
+            const body = popup.document.getElementById('modalBody');
+
+            if (!modal) { console.error('Modal non trovato nel popup'); return; }
+
+            // Title with Export Button
+            let headerHtml = 'Dettagli WBS: ' + data.code + ' - ' + data.nome;
+            headerHtml += ' <button style="margin-left: 20px; font-size: 12px; padding: 4px 8px; background-color: #217346; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.opener.exportWBSDetails(\'' + code + '\')">Copia in Excel</button>';
+            title.innerHTML = headerHtml;
+
+            let html = '<div style="max-height:600px; overflow-y:auto;"><table class="details-table">';
+            html += '<thead><tr>';
+            html += '<th>Codice Voce</th>';
+            html += '<th>Descrizione</th>';
+            html += '<th>U.M.</th>';
+            html += '<th>Qt.</th>';
+            html += '<th>Prezzo BGT</th>';
+            html += '<th>Importo BGT</th>';
+            html += '<th>Prezzo RM</th>';
+            html += '<th>Importo RM</th>';
+            html += '</tr></thead><tbody>';
+
+            let totBGT = 0;
+            let totRM = 0;
+
+            data.rows.forEach(r => {
+                // 7: Tariffa, 8: Desc, 9: UM, 10: Qt, 24: PBGT, 25: IBGT, 15: PRM, 16: IRM
+                html += '<tr>';
+                html += '<td>' + (r[7] || '') + '</td>';
+                html += '<td style="min-width:300px">' + (r[8] || '') + '</td>';
+                html += '<td style="text-align:center">' + (r[9] || '') + '</td>';
+                html += '<td class="num">' + (r[10] || '') + '</td>';
+                html += '<td class="num">' + (r[24] || '') + '</td>';
+                html += '<td class="num">' + (r[25] || '') + '</td>';
+                html += '<td class="num">' + (r[15] || '') + '</td>';
+                html += '<td class="num">' + (r[16] || '') + '</td>';
+                html += '</tr>';
+
+                let ibgt = parseFloat(String(r[25] || '0').replace(/\./g, '').replace(',', '.')) || 0;
+                let irm = parseFloat(String(r[16] || '0').replace(/\./g, '').replace(',', '.')) || 0;
+                totBGT += ibgt;
+                totRM += irm;
+            });
+
+            // Totals row
+            html += '<tr style="background:#e0e0e0; font-weight:bold;">';
+            html += '<td colspan="5" style="text-align:right">TOTALE</td>';
+            html += '<td class="num">' + totBGT.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>';
+            html += '<td></td>';
+            html += '<td class="num">' + totRM.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</td>';
+            html += '</tr>';
+
+            html += '</tbody></table></div>';
+
+            body.innerHTML = html;
+            modal.style.display = 'block';
+        };
+
+        // --- EXPORT FUNCTIONS ---
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert("Dati copiati negli appunti. Incolla in Excel.");
+                }).catch(err => {
+                    console.error('Errore copia appunti: ', err);
+                    fallbackCopyTextToClipboard(text);
+                });
+            } else {
+                fallbackCopyTextToClipboard(text);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+
+            // Ensure element is visible but out of viewport
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
+
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                var successful = document.execCommand('copy');
+                var msg = successful ? 'Dati copiati negli appunti. Incolla in Excel.' : 'Copia fallita';
+                alert(msg);
+            } catch (err) {
+                console.error('Baco Copia fallback', err);
+                alert('Impossibile copiare automaticamente. Riprova.');
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        function exportDataToExcel(data, headers) {
+            let tsv = headers.join('\t') + '\n';
+            data.forEach(row => {
+                let line = row.map(cell => {
+                    let txt = String(cell || '').replace(/(\r\n|\n|\r)/gm, " "); // Rimuovi newline interni
+                    txt = txt.replace(/\t/g, " "); // Rimuovi tab interni
+                    return txt;
+                }).join('\t');
+                tsv += line + '\n';
+            });
+            copyToClipboard(tsv);
+        }
+
+        window.exportMainTable = function () {
+            if (!currentFilteredData || currentFilteredData.length === 0) {
+                alert("Nessun dato da esportare.");
+                return;
+            }
+            // Recupera headers
+            const table = document.getElementById('mainTable');
+            const ths = table.querySelectorAll('thead th');
+            const headers = Array.from(ths).map(th => th.innerText.replace('▼', '').trim());
+
+            // exportDataToExcel si aspetta solo i dati grezzi. 
+            exportDataToExcel(currentFilteredData, headers);
+        };
+
+        window.exportWBSDetails = function (code) {
+            const data = window.wbsData[code];
+            if (!data) return;
+
+            const headers = ['Codice Voce', 'Descrizione', 'U.M.', 'Qt.', 'Prezzo BGT', 'Importo BGT', 'Prezzo RM', 'Importo RM'];
+            const rows = data.rows.map(r => [
+                r[7], // Tariffa
+                r[8], // Desc
+                r[9], // UM
+                r[10], // Qt
+                r[24], // P.BGT
+                r[25], // I.BGT
+                r[15], // P.RM
+                r[16]  // I.RM
+            ]);
+
+            exportDataToExcel(rows, headers);
+        };
+
+        // --- COVER PAGE & PASSWORD LOGIC ---
+        function enterDashboard() {
+            const cover = document.getElementById('landing-page');
+            if (cover) {
+                cover.style.opacity = '0';
+                setTimeout(() => {
+                    cover.style.display = 'none';
+                }, 500);
+            }
+        }
+
+
+
+        // Initialize Chart when password check passes (or layout changes)
+        // actually we can init it immediately, it will just be hidden inside landing-page
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('soaChart').getContext('2d');
+
+            // Data
+            const labels = ['OG1', 'OG10', 'OG11', 'OG3', 'OG6', 'OS16', 'OS9'];
+            const values = [2826795.65, 313071.53, 7960007.32, 57672362.14, 4234818.32, 4026587.24, 7912559.07];
+            const total = values.reduce((a, b) => a + b, 0);
+            const percentages = values.map(v => ((v / total) * 100).toFixed(2));
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '% Incidenza Importo (RM Appalti)',
+                        data: percentages,
+                        backgroundColor: [
+                            '#003366', '#ff9800', '#003366', '#ff9800', '#003366', '#ff9800', '#003366'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'DISTRIBUZIONE PERCENTUALE PER CATEGORIA SOA',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#003366'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return value + "%"
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        async function checkPassword() {
+            const input = document.getElementById('password-input');
+            const error = document.getElementById('password-error');
+            const val = input.value;
+
+            // Calculate Hash
+            const msgBuffer = new TextEncoder().encode(val);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            // TARGET HASH = SHA256('RM_@lghero_2025')
+            const targetHash = "3075ef1f7aa38bfccd3ebb4987c36d4f86f223cd3bdbd7689c1a3f2873f3aa40";
+
+            if (hashHex === targetHash) {
+                document.getElementById('password-overlay').style.display = 'none';
+                document.getElementById('landing-page').style.display = 'flex';
+            } else {
+                error.style.display = 'block';
+                input.style.borderColor = '#d32f2f';
+            }
+        }
+
+        // Enter key support
+        document.getElementById('password-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+    </script>
+</body>
+
+</html>
